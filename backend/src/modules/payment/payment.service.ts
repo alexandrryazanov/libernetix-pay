@@ -25,6 +25,8 @@ export class PaymentService {
 
     const apiInstance = new Libernetix.PaymentApi();
     const purchase = new Libernetix.Purchase();
+    purchase.success_redirect = 'https://test.com'; // is not used for S2S
+    purchase.failure_redirect = 'https://test.com'; // is not used for S2S
     purchase.brand_id = this.configService.get<string>('LIBERNETIX_BRAND_ID')!;
     purchase.client = new Libernetix.ClientDetails(email);
     purchase.purchase = new Libernetix.PurchaseDetails(
