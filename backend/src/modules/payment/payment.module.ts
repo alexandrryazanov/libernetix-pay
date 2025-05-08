@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { PaymentController } from './payment.controller';
 import { PaymentService } from './payment.service';
 import { ConfigModule } from '@nestjs/config';
-import { OrdersModule } from '@/orders/orders.module';
+import { OrdersModule } from '@/modules/orders/orders.module';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({

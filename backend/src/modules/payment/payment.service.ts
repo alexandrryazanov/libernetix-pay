@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import Libernetix from 'libernetix';
 import { ConfigService } from '@nestjs/config';
-import { OrdersService } from '@/orders/orders.service';
+import { OrdersService } from '@/modules/orders/orders.service';
 import { HttpService } from '@nestjs/axios';
 import { S2sPayDto } from '@/modules/payment/dto/s2s-pay.dto';
 

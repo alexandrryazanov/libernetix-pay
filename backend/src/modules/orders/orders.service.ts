@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Order } from '@/orders/orders.types';
+import { Order } from '@/modules/orders/orders.types';
 
 // Mock service for test orders, that we can try to pay (in a real project we store and get it with a database)
 const orders: Record<string, Order> = {
