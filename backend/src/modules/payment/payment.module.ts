@@ -3,9 +3,10 @@ import { PaymentController } from './payment.controller';
 import { PaymentService } from './payment.service';
 import { ConfigModule } from '@nestjs/config';
 import { OrdersModule } from '@/orders/orders.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [ConfigModule, OrdersModule],
+  imports: [ConfigModule, OrdersModule, HttpModule],
   controllers: [PaymentController],
   providers: [PaymentService],
 })
