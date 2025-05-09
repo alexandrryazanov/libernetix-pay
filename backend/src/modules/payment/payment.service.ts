@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { OrdersService } from '@/modules/orders/orders.service';
 import { HttpService } from '@nestjs/axios';
 import { S2sPayDto } from '@/modules/payment/dto/s2s-pay.dto';
+import { ResponseWith3DS, ResponseWithout3DS } from './payment.types';
 
 @Injectable()
 export class PaymentService {
@@ -59,7 +60,7 @@ export class PaymentService {
     try {
       const createdPurchase = await purchasePromise();
       order.paymentId = createdPurchase.id; // instead of DB update
-      return createdPurchase.id;
+      return { paymentId: createdPurchase.id };
     } catch (e) {
       // TODO add logger
       throw new HttpException(e.message, 500);
@@ -104,7 +105,10 @@ export class PaymentService {
       this.configService.get<string>('LIBERNETIX_S2S_TOKEN') || '';
 
     try {
-      const response = await this.httpService.axiosRef.post<string>(
+      // Could not find some pay method in the Libernetix library, so use a simple http request
+      const response = await this.httpService.axiosRef.post<
+        ResponseWith3DS | ResponseWithout3DS
+      >(
         s2sUrl,
         {
           cardholder_name: dto.cardholderName,
@@ -131,7 +135,31 @@ export class PaymentService {
         },
       );
 
-      return response.data;
+      if (response.data.status === '3DS_required') {
+        const { URL, PaReq, MD, callback_url } = response.data;
+
+        const html = `
+          <!DOCTYPE html>
+          <html lang="en">
+            <head><title>3D Secure Redirect</title></head>
+            <body onload="document.forms[0].submit();">
+              <form method="POST" action="${URL}">
+                <input type="hidden" name="PaReq" value="${PaReq}" />
+                <input type="hidden" name="MD" value="${MD || ''}" />
+                <input type="hidden" name="TermUrl" value="${callback_url}" />
+                <noscript>
+                  <p>Click the button to continue</p>
+                  <button type="submit">Continue</button>
+                </noscript>
+              </form>
+            </body>
+          </html>
+        `;
+
+        return { status: '3DS_required', html };
+      }
+
+      return { status: 'success' };
     } catch (e) {
       throw new HttpException(e.message, 500);
     }
