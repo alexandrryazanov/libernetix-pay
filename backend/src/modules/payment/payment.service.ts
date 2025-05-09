@@ -11,6 +11,7 @@ import { HttpService } from '@nestjs/axios';
 import { S2sPayDto } from '@/modules/payment/dto/s2s-pay.dto';
 import { ResponseWith3DS, ResponseWithout3DS } from './payment.types';
 import { promisify } from '@/utils/transform';
+import { generate3dsHtml } from './payment.utils';
 
 @Injectable()
 export class PaymentService {
@@ -126,25 +127,7 @@ export class PaymentService {
 
       if (response.data.status === '3DS_required') {
         const { URL, PaReq, MD, callback_url } = response.data;
-
-        const html = `
-          <!DOCTYPE html>
-          <html lang="en">
-            <head><title>3D Secure Redirect</title></head>
-            <body onload="document.forms[0].submit();">
-              <form method="POST" action="${URL}">
-                <input type="hidden" name="PaReq" value="${PaReq}" />
-                <input type="hidden" name="MD" value="${MD || ''}" />
-                <input type="hidden" name="TermUrl" value="${callback_url}" />
-                <noscript>
-                  <p>Click the button to continue</p>
-                  <button type="submit">Continue</button>
-                </noscript>
-              </form>
-            </body>
-          </html>
-        `;
-
+        const html = generate3dsHtml(URL, PaReq, MD, callback_url);
         return { status: '3DS_required', html };
       }
 
