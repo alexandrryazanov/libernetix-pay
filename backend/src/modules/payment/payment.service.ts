@@ -10,10 +10,11 @@ import { OrdersService } from '@/modules/orders/orders.service';
 import { HttpService } from '@nestjs/axios';
 import { S2sPayDto } from '@/modules/payment/dto/s2s-pay.dto';
 import { ResponseWith3DS, ResponseWithout3DS } from './payment.types';
+import { promisify } from '@/utils/transform';
 
 @Injectable()
 export class PaymentService {
-  private apiInstance: Libernetix.PaymentApi;
+  private readonly apiInstance: Libernetix.PaymentApi;
 
   constructor(
     private readonly configService: ConfigService,
@@ -36,8 +37,8 @@ export class PaymentService {
     }
 
     const purchase = new Libernetix.Purchase();
-    purchase.success_redirect = 'https://test.com'; // is not used for S2S
-    purchase.failure_redirect = 'https://test.com'; // is not used for S2S
+    purchase.success_redirect = 'https://test.com'; // not used for S2S
+    purchase.failure_redirect = 'https://test.com'; // not used for S2S
     purchase.brand_id = this.configService.get<string>('LIBERNETIX_BRAND_ID')!;
     purchase.client = new Libernetix.ClientDetails(email);
     purchase.purchase = new Libernetix.PurchaseDetails(
@@ -45,20 +46,15 @@ export class PaymentService {
         (product) => new Libernetix.Product(product.name, product.price),
       ),
     );
+    purchase.purchase.currency = 'USD';
 
-    const purchasePromise = () =>
-      new Promise<Libernetix.Purchase>((resolve, reject) => {
-        this.apiInstance.purchasesCreate(purchase, (error, data) => {
-          if (error) {
-            console.dir(error?.response?.request?._data, { depth: null });
-            reject(new Error(JSON.stringify(error?.response?.request?._data)));
-          }
-          resolve(data);
-        });
-      });
+    const createPurchase = promisify<
+      Libernetix.Purchase,
+      [Libernetix.Purchase]
+    >(this.apiInstance.purchasesCreate.bind(this.apiInstance));
 
     try {
-      const createdPurchase = await purchasePromise();
+      const createdPurchase = await createPurchase(purchase);
       order.paymentId = createdPurchase.id; // instead of DB update
       return { paymentId: createdPurchase.id };
     } catch (e) {
@@ -74,16 +70,9 @@ export class PaymentService {
       throw new BadRequestException('Order does not have payment id');
     }
 
-    const getPurchase = (paymentId: string) =>
-      new Promise<Libernetix.Purchase>((resolve, reject) => {
-        this.apiInstance.purchasesRead(paymentId, (error, data) => {
-          if (error) {
-            console.dir(error?.response?.request?._data, { depth: null });
-            reject(new Error(JSON.stringify(error?.response?.request?._data)));
-          }
-          resolve(data);
-        });
-      });
+    const getPurchase = promisify<Libernetix.Purchase, [string]>(
+      this.apiInstance.purchasesRead.bind(this.apiInstance),
+    );
 
     let direct_post_url = '';
     try {
