@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Order, OrderStatus } from '@/modules/orders/orders.types';
 
 // Mock service for test orders, that we can try to pay (in a real project we store and get it with a database)
@@ -22,11 +26,22 @@ const orders: Record<string, Order> = {
 
 @Injectable()
 export class OrdersService {
-  getOrderById(orderId: string) {
+  getAll(email: string) {
+    const userOrders = Object.entries(orders).filter(
+      ([, order]) => order.email === email,
+    );
+    return userOrders.map(([id, order]) => ({ ...order, id }));
+  }
+
+  getOrderById(orderId: string, ownerEmail?: string) {
     const order = orders[orderId];
 
     if (!order) {
       throw new NotFoundException('Order not found');
+    }
+
+    if (ownerEmail && order.email !== ownerEmail) {
+      throw new ForbiddenException('You are not allowed to access this order');
     }
 
     return orders[orderId];
