@@ -1,9 +1,14 @@
 import React, { type ChangeEvent, type FormEvent, useState } from "react";
 import styles from "./styles.module.css";
 import Input from "../Input";
-import { Currency, type FormErrors, type FormState } from "./types.ts";
+import {
+  Currency,
+  type FormErrors,
+  type FormState,
+  type PaymentFormProps,
+} from "./types.ts";
 
-const PaymentForm: React.FC = () => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ orderId }) => {
   const [form, setForm] = useState<FormState>({
     amount: "5",
     currency: Currency.USD,
@@ -44,9 +49,10 @@ const PaymentForm: React.FC = () => {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <h1 className={styles.title}>Payment Form</h1>
+      <h1 className={styles.title}>Pay for {orderId}</h1>
       <div className={styles.row}>
         <Input
+          type="number"
           name="amount"
           value={form.amount}
           onChange={handleChange}
@@ -89,9 +95,7 @@ const PaymentForm: React.FC = () => {
         label="Security Code"
         error={errors.securityCode}
       />
-      <button type="submit" className={styles.button}>
-        Pay
-      </button>
+      <button type="submit">Pay</button>
     </form>
   );
 };

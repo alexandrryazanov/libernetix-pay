@@ -1,3 +1,7 @@
+export interface PaymentFormProps {
+  orderId: string;
+}
+
 export interface FormState {
   amount: string;
   currency: Currency;

@@ -3,6 +3,7 @@ import styles from "./styles.module.css";
 import type { InputProps } from "./types.ts";
 
 const Input: React.FC<InputProps> = ({
+  type = "text",
   name,
   value,
   onChange,
@@ -16,6 +17,7 @@ const Input: React.FC<InputProps> = ({
         {label}
       </label>
       <input
+        type={type}
         id={name}
         name={name}
         value={value}
