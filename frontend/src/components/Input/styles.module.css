@@ -1,0 +1,27 @@
+.wrapper {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.error {
+    border-color: red;
+}
+
+.errorText {
+    margin-top: 0.25rem;
+    color: red;
+    font-size: 12px;
+}

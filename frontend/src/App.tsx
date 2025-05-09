@@ -1,5 +1,11 @@
+import PaymentForm from "./components/PaymentForm";
+
 function App() {
-  return <>Hello Libernetix!</>;
+  return (
+    <div>
+      <PaymentForm />
+    </div>
+  );
 }
 
 export default App;
