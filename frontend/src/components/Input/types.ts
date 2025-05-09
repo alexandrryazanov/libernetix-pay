@@ -8,4 +8,5 @@ export interface InputProps {
   label: string;
   error?: string;
   placeholder?: string;
+  disabled?: boolean;
 }

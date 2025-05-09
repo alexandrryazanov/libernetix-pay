@@ -10,6 +10,7 @@ const Input: React.FC<InputProps> = ({
   label,
   error,
   placeholder = "",
+  disabled,
 }) => {
   return (
     <div className={styles.wrapper}>
@@ -18,6 +19,7 @@ const Input: React.FC<InputProps> = ({
       </label>
       <input
         type={type}
+        disabled={disabled}
         id={name}
         name={name}
         value={value}

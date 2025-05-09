@@ -52,6 +52,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId }) => {
       <h1 className={styles.title}>Pay for {orderId}</h1>
       <div className={styles.row}>
         <Input
+          disabled
           type="number"
           name="amount"
           value={form.amount}
@@ -59,6 +60,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId }) => {
           label="Amount"
         />
         <Input
+          disabled
           name="currency"
           value={form.currency}
           onChange={handleChange}
@@ -95,6 +97,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId }) => {
         label="Security Code"
         error={errors.securityCode}
       />
+      <br />
       <button type="submit">Pay</button>
     </form>
   );

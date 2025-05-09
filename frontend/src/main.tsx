@@ -11,8 +11,8 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<OrdersPage />} />
-        <Route path="/order/:orderId" element={<OrderPage />} />
-        <Route path="/order/:orderId/success" element={<SuccessPage />} />
+        <Route path="/orders/:orderId" element={<OrderPage />} />
+        <Route path="/orders/:orderId/success" element={<SuccessPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
