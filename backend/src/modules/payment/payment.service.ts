@@ -148,6 +148,8 @@ export class PaymentService {
         return { status: '3DS_required', html };
       }
 
+      this.ordersService.confirmOrderById(dto.orderId);
+
       return { status: 'success' };
     } catch (e) {
       throw new HttpException(e.message, 500);

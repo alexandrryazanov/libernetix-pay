@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { LibernetixWebhookType } from '@/modules/webhooks/libernetix/libernetix-webhooks.types';
+import { OrdersService } from '@/modules/orders/orders.service';
 
 @Injectable()
 export class LibernetixWebhooksService {
+  constructor(private readonly ordersService: OrdersService) {}
+
   eventHandler(dto: any) {
     console.log(dto);
 
@@ -20,6 +23,7 @@ export class LibernetixWebhooksService {
   }
 
   private async paidHandler(dto: any) {
+    this.ordersService.confirmOrderById(dto.metadata.orderId);
     return Promise.resolve(true);
   }
 }
