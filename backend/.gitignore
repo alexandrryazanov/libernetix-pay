@@ -29,3 +29,6 @@ npm-debug.log*
 
 #vscode
 .vscode
+
+# keys
+src/keys/libernetix.pem

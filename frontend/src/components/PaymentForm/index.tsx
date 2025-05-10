@@ -94,7 +94,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
         <br />
         {!isProduction && (
           <button onClick={() => navigate(`/orders/${orderId}/success`)}>
-            For not HTTPS redirect, you can go to success page manually.
+            For not HTTPS redirect, you can go to success page manually after
+            3DS.
           </button>
         )}
       </div>

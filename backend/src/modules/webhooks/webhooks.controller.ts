@@ -1,5 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { LibernetixWebhooksService } from './libernetix/libernetix-webhooks.service';
+import { WebhookSignatureGuard } from '@/guards/webhook-signature.guard';
 
 @Controller('webhooks')
 export class WebhooksController {
@@ -8,7 +10,9 @@ export class WebhooksController {
   ) {}
 
   @Post('libernetix')
-  libernetixHandler(@Body() dto: any) {
-    return this.libernetixWebhooksService.eventHandler(dto);
+  @UseGuards(WebhookSignatureGuard)
+  async handleLibernetixWebhook(@Req() req: Request) {
+    const payload = JSON.parse(req.body.toString('utf8'));
+    return this.libernetixWebhooksService.eventHandler(payload);
   }
 }

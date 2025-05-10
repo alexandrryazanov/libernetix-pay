@@ -48,6 +48,7 @@ export class PaymentService {
       ),
     );
     purchase.purchase.currency = 'USD';
+    purchase.purchase.notes = JSON.stringify({ orderId });
 
     const createPurchase = promisify<
       Libernetix.Purchase,
@@ -107,15 +108,12 @@ export class PaymentService {
           cvc: dto.cvc,
           remember_card: 'off',
           remote_ip: ip,
-          user_agent: dto.userAgent || '',
-          accept_header: 'text/html',
-          language: dto.language || 'en-US',
+          language: dto.language,
           java_enabled: false,
           javascript_enabled: true,
-          color_depth: 24,
-          utc_offset: dto.utcOffset || 0,
-          screen_width: dto.screenWidth || 1920,
-          screen_height: dto.screenHeight || 1080,
+          utc_offset: dto.utcOffset,
+          screen_width: dto.screenWidth,
+          screen_height: dto.screenHeight,
         },
         {
           headers: {

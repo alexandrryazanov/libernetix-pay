@@ -59,10 +59,11 @@ export class S2sPayDto {
 
   @IsNumberString()
   @MinLength(3)
-  @MaxLength(3)
+  @MaxLength(4)
   cvc: string;
 
   @IsString()
+  @MaxLength(2048)
   userAgent: string;
 
   @IsOptional()

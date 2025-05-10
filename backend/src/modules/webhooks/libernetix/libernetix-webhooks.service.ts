@@ -6,24 +6,19 @@ import { OrdersService } from '@/modules/orders/orders.service';
 export class LibernetixWebhooksService {
   constructor(private readonly ordersService: OrdersService) {}
 
-  eventHandler(dto: any) {
-    console.log(dto);
+  async eventHandler(dto: { id: string; type: string; status: string }) {
+    const type = `${dto.type}.${dto.status}` as LibernetixWebhookType;
 
-    switch (dto.type) {
-      case LibernetixWebhookType.CREATED:
-        return this.createdHandler(dto);
+    switch (type) {
       case LibernetixWebhookType.PAID:
         return this.paidHandler(dto);
+      // TODO: add other events
     }
   }
 
-  private async createdHandler(dto: any) {
-    // TODO: implement
-    return Promise.resolve(true);
-  }
-
-  private async paidHandler(dto: any) {
-    this.ordersService.confirmOrderById(dto.metadata.orderId);
+  private async paidHandler(dto: { id: string }) {
+    const order = this.ordersService.getOrderByPaymentId(dto.id);
+    this.ordersService.confirmOrderById(order.id);
     return Promise.resolve(true);
   }
 }

@@ -47,12 +47,26 @@ export class OrdersService {
     return orders[orderId];
   }
 
+  getOrderByPaymentId(paymentId: string) {
+    const orderEntry = Object.entries(orders).find(
+      ([, order]) => order.paymentId === paymentId,
+    );
+
+    if (!orderEntry) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return { id: orderEntry[0], ...orderEntry[1] };
+  }
+
   confirmOrderById(orderId: string) {
     const order = orders[orderId];
 
-    // TODO: do something on confirm order and handle errors during confirmation
+    if (order.status !== OrderStatus.FINISHED) {
+      // TODO: do something on confirm order and handle errors during confirmation
+      order.status = OrderStatus.FINISHED;
+    }
 
-    order.status = OrderStatus.FINISHED;
     return order;
   }
 }
