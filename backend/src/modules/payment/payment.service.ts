@@ -133,7 +133,7 @@ export class PaymentService {
 
       this.ordersService.confirmOrderById(dto.orderId);
 
-      return { status: 'success' };
+      return { status: 'success', orderId: dto.orderId };
     } catch (e) {
       throw new HttpException(e.message, 500);
     }

@@ -7,8 +7,13 @@ import {
   type FormState,
   type PaymentFormProps,
 } from "./types.ts";
+import useMutate from "../../hooks/useMutate.tsx";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState<FormState>({
     amount: (amount / 100).toFixed(2),
     currency: Currency.USD,
@@ -19,6 +24,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+
+  const { mutate: pay, isLoading } = useMutate<{ orderId: string }>(
+    "/payment/s2s",
+    (data) => navigate(`/orders/${data.orderId}/success`), // TODO: handle 3ds
+    (error) => toast.error(error),
+  );
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (Object.keys(errors).length) setErrors({});
@@ -42,9 +53,20 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validate()) {
-      console.log("Submitted", form);
-    }
+    if (!validate()) return;
+
+    pay({
+      orderId,
+      cardNumber: form.cardNumber,
+      cardholderName: form.cardholderName,
+      expires: form.expirationDate,
+      cvc: form.securityCode,
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      utcOffset: -new Date().getTimezoneOffset(),
+      screenWidth: window.screen.width,
+      screenHeight: window.screen.height,
+    });
   };
 
   return (
@@ -98,7 +120,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
         error={errors.securityCode}
       />
       <br />
-      <button type="submit">Pay</button>
+      <button disabled={isLoading} type="submit">
+        {isLoading ? "Processing" : "Pay"}
+      </button>
     </form>
   );
 };
