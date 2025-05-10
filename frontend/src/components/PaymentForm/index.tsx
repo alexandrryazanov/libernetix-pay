@@ -11,6 +11,8 @@ import useMutate from "../../hooks/useMutate.tsx";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 
+const isProduction = import.meta.env.VITE_ENV === "production";
+
 const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
   const navigate = useNavigate();
 
@@ -24,10 +26,19 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [htmlFor3DS, setHtmlFor3DS] = useState("");
+
+  const onSuccessPayment = (data: { orderId: string } | string) => {
+    if (typeof data === "object" && data.orderId) {
+      navigate(`/orders/${data.orderId}/success`);
+    } else if (typeof data === "string") {
+      setHtmlFor3DS(data);
+    }
+  };
 
   const { mutate: pay, isLoading } = useMutate<{ orderId: string }>(
     "/payment/s2s",
-    (data) => navigate(`/orders/${data.orderId}/success`), // TODO: handle 3ds
+    onSuccessPayment,
     (error) => toast.error(error),
   );
 
@@ -66,8 +77,29 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
       utcOffset: -new Date().getTimezoneOffset(),
       screenWidth: window.screen.width,
       screenHeight: window.screen.height,
+      callbackUrl: isProduction
+        ? `${window.location.origin}/orders/${orderId}/success`
+        : undefined,
     });
   };
+
+  if (htmlFor3DS) {
+    return (
+      <div>
+        <iframe
+          title="3D Secure"
+          srcDoc={htmlFor3DS}
+          style={{ width: "100%", height: "600px" }}
+        />
+        <br />
+        {!isProduction && (
+          <button onClick={() => navigate(`/orders/${orderId}/success`)}>
+            For not HTTPS redirect, you can go to success page manually.
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -121,7 +153,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
       />
       <br />
       <button disabled={isLoading} type="submit">
-        {isLoading ? "Processing" : "Pay"}
+        {isLoading ? "Processing..." : "Pay"}
       </button>
     </form>
   );

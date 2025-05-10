@@ -4,6 +4,7 @@ import {
   IsNumberString,
   IsOptional,
   IsString,
+  IsUrl,
   Matches,
   MaxLength,
   MinLength,
@@ -79,4 +80,8 @@ export class S2sPayDto {
   @IsOptional()
   @IsInt()
   screenHeight: number;
+
+  @IsOptional()
+  @IsUrl()
+  callbackUrl?: string;
 }

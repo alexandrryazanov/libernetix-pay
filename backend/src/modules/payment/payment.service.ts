@@ -127,7 +127,12 @@ export class PaymentService {
 
       if (response.data.status === '3DS_required') {
         const { URL, PaReq, MD, callback_url } = response.data;
-        const html = generate3dsHtml(URL, PaReq, MD, callback_url);
+        const html = generate3dsHtml(
+          URL,
+          PaReq,
+          MD,
+          dto.callbackUrl || callback_url,
+        );
         return { status: '3DS_required', html };
       }
 

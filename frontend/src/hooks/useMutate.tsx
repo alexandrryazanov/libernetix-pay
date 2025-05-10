@@ -30,7 +30,13 @@ const useMutate = <TData,>(
           ...headers,
         },
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.headers.get("Content-Type")?.includes("text/html")) {
+            return res.text();
+          } else {
+            return res.json();
+          }
+        })
         .then((data) => {
           setFetchingState((prev) => ({
             ...prev,
