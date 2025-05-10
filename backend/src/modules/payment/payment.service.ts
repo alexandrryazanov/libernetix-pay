@@ -57,7 +57,7 @@ export class PaymentService {
     try {
       const createdPurchase = await createPurchase(purchase);
       order.paymentId = createdPurchase.id; // instead of DB update
-      return { paymentId: createdPurchase.id };
+      return { paymentId: createdPurchase.id, orderId };
     } catch (e) {
       // TODO add logger
       throw new HttpException(e.message, 500);

@@ -17,7 +17,6 @@ const OrderPage = () => {
     ) || 0;
 
   if (!orderId) return <div>Order is not specified</div>;
-
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   if (!data) return <div>No such order</div>;
