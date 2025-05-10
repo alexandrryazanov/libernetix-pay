@@ -8,9 +8,9 @@ import {
   type PaymentFormProps,
 } from "./types.ts";
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ orderId }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
   const [form, setForm] = useState<FormState>({
-    amount: "5",
+    amount: (amount / 100).toFixed(2),
     currency: Currency.USD,
     cardNumber: "",
     cardholderName: "",
@@ -52,15 +52,15 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId }) => {
       <h1 className={styles.title}>Pay for {orderId}</h1>
       <div className={styles.row}>
         <Input
-          disabled
+          disabled // get amount from order
           type="number"
           name="amount"
           value={form.amount}
-          onChange={handleChange}
+          onChange={() => null}
           label="Amount"
         />
         <Input
-          disabled
+          disabled // now use only USD
           name="currency"
           value={form.currency}
           onChange={handleChange}
