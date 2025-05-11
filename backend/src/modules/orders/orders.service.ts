@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Order, OrderStatus } from '@/modules/orders/orders.types';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 // Mock service for test orders, that we can try to pay (in a real project we store and get it with a database)
 const orders: Record<string, Order> = {
@@ -26,6 +27,11 @@ const orders: Record<string, Order> = {
 
 @Injectable()
 export class OrdersService {
+  constructor(
+    @InjectPinoLogger(OrdersService.name)
+    private readonly logger: PinoLogger,
+  ) {}
+
   getAll(email: string) {
     const userOrders = Object.entries(orders).filter(
       ([, order]) => order.email === email,
@@ -66,6 +72,8 @@ export class OrdersService {
       // TODO: do something on confirm order and handle errors during confirmation
       order.status = OrderStatus.FINISHED;
     }
+
+    this.logger.info({ orderId }, 'Order confirmed');
 
     return order;
   }

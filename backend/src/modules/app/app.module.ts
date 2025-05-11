@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PaymentModule } from '@/modules/payment/payment.module';
 import { OrdersModule } from '@/modules/orders/orders.module';
 import { WebhooksModule } from '@/modules/webhooks/webhooks.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -12,6 +13,18 @@ import { WebhooksModule } from '@/modules/webhooks/webhooks.module';
     PaymentModule,
     OrdersModule,
     WebhooksModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
+        transport:
+          process.env.NODE_ENV !== 'production'
+            ? {
+                target: 'pino-pretty',
+                options: { translateTime: true, colorize: true },
+              }
+            : undefined,
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
