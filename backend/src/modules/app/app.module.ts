@@ -6,6 +6,7 @@ import { PaymentModule } from '@/modules/payment/payment.module';
 import { OrdersModule } from '@/modules/orders/orders.module';
 import { WebhooksModule } from '@/modules/webhooks/webhooks.module';
 import { LoggerModule } from 'nestjs-pino';
+import { HealthModule } from '@/modules/health/health.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { LoggerModule } from 'nestjs-pino';
     PaymentModule,
     OrdersModule,
     WebhooksModule,
+    HealthModule,
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
