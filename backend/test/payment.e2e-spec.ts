@@ -5,6 +5,7 @@ import { AppModule } from '@/modules/app/app.module';
 import { OrdersService } from '@/modules/orders/orders.service';
 import { HttpService } from '@nestjs/axios';
 import { PaymentService } from '@/modules/payment/payment.service';
+import { OrderStatus } from '@/modules/orders/orders.types';
 
 describe('PaymentController (e2e)', () => {
   let app: INestApplication;
@@ -17,9 +18,9 @@ describe('PaymentController (e2e)', () => {
       .useValue({
         getOrderById: jest.fn().mockReturnValue({
           email: 'user@example.com',
-          products: [],
+          products: [{ name: 'Item 1', price: 100 }],
           paymentId: 'payment123',
-          status: 'pending',
+          status: OrderStatus.CREATED,
         }),
         confirmOrderById: jest.fn(),
       })
