@@ -35,7 +35,12 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ orders }) => {
             <td>{order.status}</td>
             <td>
               {order.status === OrderStatus.CREATED && (
-                <button onClick={() => onOrderClick(order.id)}>Pay</button>
+                <button
+                  className="button"
+                  onClick={() => onOrderClick(order.id)}
+                >
+                  Pay
+                </button>
               )}
             </td>
           </tr>

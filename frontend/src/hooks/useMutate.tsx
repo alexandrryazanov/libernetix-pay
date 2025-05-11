@@ -30,12 +30,18 @@ const useMutate = <TData,>(
           ...headers,
         },
       })
-        .then((res) => {
-          if (res.headers.get("Content-Type")?.includes("text/html")) {
-            return res.text();
-          } else {
-            return res.json();
+        .then(async (res) => {
+          const isHTML = res.headers.get("Content-Type")?.includes("text/html");
+          const responseBody = isHTML ? await res.text() : await res.json();
+
+          if (!res.ok) {
+            throw {
+              status: res.status,
+              statusText: res.statusText,
+              body: responseBody,
+            };
           }
+          return responseBody;
         })
         .then((data) => {
           setFetchingState((prev) => ({
@@ -46,13 +52,16 @@ const useMutate = <TData,>(
           if (onSuccess) onSuccess(data);
         })
         .catch((e) => {
+          const msg = Array.isArray(e.body.message)
+            ? e.body.message[0]
+            : e.body.message || "Error while mutate data";
           setFetchingState((prev) => ({
             ...prev,
-            error: "Error while mutate data",
+            error: msg,
             isLoading: false,
           }));
-          console.error(e); // TODO: create error handler for error from server
-          if (onError) onError("Error while mutate data");
+
+          if (onError) onError(msg);
         });
     },
     [url, onSuccess, onError],

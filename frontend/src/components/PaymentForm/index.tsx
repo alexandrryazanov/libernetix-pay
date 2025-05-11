@@ -93,7 +93,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
         />
         <br />
         {!isProduction && (
-          <button onClick={() => navigate(`/orders/${orderId}/success`)}>
+          <button
+            className="button"
+            onClick={() => navigate(`/orders/${orderId}/success`)}
+          >
             For not HTTPS redirect, you can go to success page manually after
             3DS.
           </button>
@@ -153,7 +156,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ orderId, amount }) => {
         error={errors.securityCode}
       />
       <br />
-      <button disabled={isLoading} type="submit">
+      <button className="button" disabled={isLoading} type="submit">
         {isLoading ? "Processing..." : "Pay"}
       </button>
     </form>

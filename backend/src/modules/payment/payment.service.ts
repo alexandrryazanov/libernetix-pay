@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   HttpException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import Libernetix from 'libernetix';
@@ -138,7 +139,8 @@ export class PaymentService {
 
       return { status: 'success', orderId: dto.orderId };
     } catch (e) {
-      throw new HttpException(e.message, 500);
+      console.log(e.response.data);
+      throw new HttpException('Payment failed', HttpStatus.PAYMENT_REQUIRED);
     }
   }
 }

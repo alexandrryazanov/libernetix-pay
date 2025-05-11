@@ -24,7 +24,18 @@ const useFetch = <TData,>(url: string, options?: FetchOptions) => {
       isLoading: true,
     }));
     fetch(`${import.meta.env.VITE_BACKEND_BASE_URL}${url}`)
-      .then((res) => res.json())
+      .then(async (res) => {
+        const responseBody = await res.json();
+
+        if (!res.ok) {
+          throw {
+            status: res.status,
+            statusText: res.statusText,
+            body: responseBody,
+          };
+        }
+        return responseBody;
+      })
       .then((data) => {
         setFetchingState((prev) => ({
           ...prev,
@@ -32,13 +43,16 @@ const useFetch = <TData,>(url: string, options?: FetchOptions) => {
           isLoading: false,
         }));
       })
-      .catch(() =>
+      .catch((e) => {
+        const msg = Array.isArray(e.body.message)
+          ? e.body.message[0]
+          : e.body.message || "Error while fetching data";
         setFetchingState((prev) => ({
           ...prev,
-          error: "Error while fetching data",
+          error: msg,
           isLoading: false,
-        })),
-      );
+        }));
+      });
   }, [url, options?.skip]);
 
   return { isLoading, data, error };
