@@ -38,11 +38,15 @@ This project is a NestJS-based backend and a simple frontend for handling server
 - ✅ **E2E test** for `POST /payment/s2s`:
   - Mocks `OrdersService`, Libernetix SDK, and Axios.
   - Asserts successful end-to-end flow.
+- ✅ **Custom decorator** for getting user from guard
+- ✅ **Configs** for getting env variables
 
 ### Frontend (`/frontend`)
 - ✅ Basic React app built with Vite.
 - ✅ Payment form: order ID, card details, and optional fields.
-- ✅ Sends data to `/payment/s2s` endpoint.
+- ✅ Payment flow with/without 3DS secure
+- ✅ Custom hooks useFetch / useMutate
+- ✅ Toast messages for errors
 
 ---
 
@@ -128,7 +132,7 @@ npm install
 Create `.env`:
 
 ```env
-VITE_BACKEND_BASE_URL=http://localhost:3000
+VITE_BACKEND_BASE_URL=http://localhost:8080
 ```
 
 3. **Run the app**
