@@ -1,4 +1,12 @@
-import { Body, Controller, Ip, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Ip,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreateIntentDto } from './dto/create-intent.dto';
 import { User } from '@/decorators/user.decorator';
@@ -18,6 +26,7 @@ export class PaymentController {
   }
 
   @Post('s2s')
+  @HttpCode(200)
   @UseGuards(AuthGuard)
   async payForOrderWithS2S(
     @Body() dto: S2sPayDto,
